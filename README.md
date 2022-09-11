@@ -1,4 +1,4 @@
-# CSC4350As1
+# CSC4350As2
 Server and client socket connection
 
 Description:
