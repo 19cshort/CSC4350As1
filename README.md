@@ -22,3 +22,5 @@ Notes:
 The UDP side works perfectly fine but the TCP side will only allow one request from the client and if another is sent the client hangs
 All of the methods still work in TCP but it will only allow one to be asked for
 other than that I believe that everything is working as intended
+
+*TCP now handles multiple requests, changed the connection from per client run to per client request
