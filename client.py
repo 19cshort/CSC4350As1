@@ -79,9 +79,6 @@ if options.protocolChoice == "UDP":
 
 elif options.protocolChoice == "TCP":
     
-    clientSocket = socket(AF_INET, SOCK_STREAM)
-    clientSocket.connect((options.serverName,options.serverPort))
-
     #while loop to print out menu as long as connection is left open
     while choice < 4:
         print ("Client Menu")
@@ -90,7 +87,10 @@ elif options.protocolChoice == "TCP":
         print ("Enter a 3 to return the date/time from the client")
         print ("Enter a 4 to close the connection")
         choice = int(input ("Please choose an option: ")) #getting user choice
-
+        
+        clientSocket = socket(AF_INET, SOCKE_STREAM)
+        clientSocket.connect((options.serverName,options.serverPort))
+        
         if choice == 1: #This option will return the ip address used to make the connection
             message = '1'
             clientSocket.send(message.encode()) #sending message to the server
@@ -98,6 +98,7 @@ elif options.protocolChoice == "TCP":
             modifiedMessage = clientSocket.recv(2048) #recieving message from the server
             modifiedMessage.decode() #decoding message which is the ip address
             print ("The client ip is: ", modifiedMessage)
+            clientSocket.close
 
         elif choice == 2: #This option will return the port used to make the connection
             message = '2'
@@ -106,6 +107,7 @@ elif options.protocolChoice == "TCP":
             modifiedMessage = clientSocket.recv(2048) #recieving message from the server
             modifiedMessage.decode() #decoding message which is the port used by client to connect to the server
             print ("The client port is: ", modifiedMessage)
+            clientSocket.close
 
         elif choice == 3: #This option will calculate and return the time delay between the client and server and the time delay from server to client
             message = datetime.now() #getting client date and time
@@ -123,7 +125,8 @@ elif options.protocolChoice == "TCP":
             #serverDateTime = datetime.strftime("%Y/%m/%d, %H:%M:%S:%f")
             scTimeDelay = clientTime - serverDateTime #calculating the time delay from server to client
             print ("The time delay from server to client is: ", scTimeDelay) #printing the time delay from server to client
-
+            clientSocket.close
+            
         elif choice == 4: #this option will close the connection
             clientSocket.close
 
