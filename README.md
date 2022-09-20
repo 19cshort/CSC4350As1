@@ -7,6 +7,10 @@ The client can get the I.P. Address from the request
 The client can get the Port used to make the connection to the server
 The client can get the timedelay from both client to server and server back to client
 
+The server now sends response codes back with the requested data
+It also now logs each request, whether valid or invalid, in a txt file
+The logs are formatted as follows: datetime method responseCode (ex. 2022-09-19 15:23:19.792500	PORT	OK)
+
 Instruction for execution and command line flags:
 I ran both of these on python version 3.9.4
 I opened an IDLE for each of the files and opened them from the IDLE
