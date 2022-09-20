@@ -35,20 +35,66 @@ if options.protocolChoice == "UDP":
         if modifiedMessage == '1':
             hostname=socket.gethostname() 
             IPAddr=socket.gethostbyname(hostname) #these two^ functions get the ip address
-            serverSocket.sendto (IPAddr.encode(), clientAddress) #sending the ip address back to the client
+            if type(IPAddr) == str:
+                resCode = 'OK'
+                message = IPAddr + ' ' + resCode
+                serverSocket.sendto (message.encode(), clientAddress) #sending the ip address back to the client
+                file = open("socketServerLog.txt", "a")
+                file.write( '\n' + str(datetime.now()) + '\t' + 'IP' + '\t' + resCode)
+                file.close()
+            else:
+                resCode = 'INVALID'
+                message = 'INVALIDREQUEST' + ' ' + resCode
+                serverSocket.sendto (message.encode(), clientAddress)
+                file = open("socketServerLog.txt", "a")
+                file.write( '\n' + str(datetime.now()) + '\t' + 'IP' + '\t' + resCode)
+                file.close()
         elif modifiedMessage == '2':
-            message = str(clientAddress[1]) #turning the port number into a string for encoding
+            message = clientAddress[1] 
             print (message)
-            serverSocket.sendto (message.encode(), clientAddress) #sending the port number back to the client
+            if message > 1 and message < 65536:
+                resCode = 'OK'
+                message = str(clientAddress[1]) #turning the port number into a string for encoding
+                message = message + ' ' + resCode
+                serverSocket.sendto(message.encode(), clientAddress) #sending the port number back to the client
+                file = open("socketServerLog.txt", "a")
+                file.write( '\n' + str(datetime.now()) + '\t' + 'PORT' + '\t' + resCode)
+                file.close()
+            else:
+                resCode = 'INVALID'
+                message = 'INVALID'
+                serverSocket.sendto (message.encode(), clientAddress)
+                file = open("socketServerLog.txt", "a")
+                file.write( '\n' + str(datetime.now()) + '\t' + 'PORT' + '\t' + resCode)
+                file.close()
         else:
             message = datetime.now() #getting the servers date and time
             modifiedMessage = datetime.strptime(modifiedMessage, "%Y/%m/%d, %H:%M:%S:%f") #taking the client date and time and formatting it
-            print (message)
-            print(modifiedMessage)
-            newMessage = message - modifiedMessage #calculating the delay between the client and the server
-            newMessage = str(newMessage)
-            wholeMessage = newMessage + ' ' + str(message) #combining the delay and the servers date time into one string for transmission
-            serverSocket.sendto(wholeMessage.encode(),clientAddress) #sending the whole message back to the client
+            if type(message) == type(modifiedMessage):
+                resCode = 'OK'
+                newMessage = message - modifiedMessage #calculating the delay between the client and the server
+                newMessage = str(newMessage)
+                wholeMessage = newMessage + ' ' + str(message) + ' ' + resCode #combining the delay and the servers date time into one string for transmission
+                serverSocket.sendto(wholeMessage.encode(),clientAddress) #sending the whole message back to the client
+                file = open("socketServerLog.txt", "a")
+                file.write('\n' + str(datetime.now()) + '\t' + 'DATETIME' + '\t' + resCode)
+                file.close()
+            else:
+                resCode = 'INVALID'
+                message = 'INVALIDREQUEST' + ' ' + str(datetime.now()) + ' ' + resCode
+                serverSocket.sendto(message.encode())
+                file = open("socketServerLog.txt", "a")
+                file.write('\n' + str(datetime.now()) + '\t' + 'DATETIME' + '\t' + resCode)
+                file.close()
+
+            #message = datetime.now() #getting the servers date and time
+            #modifiedMessage = datetime.strptime(modifiedMessage, "%Y/%m/%d, %H:%M:%S:%f") #taking the client date and time and formatting it
+            #print (type(message))
+            #print(type(modifiedMessage))
+            #newMessage = message - modifiedMessage #calculating the delay between the client and the server
+            #newMessage = str(newMessage)
+            #wholeMessage = newMessage + ' ' + str(message) #combining the delay and the servers date time into one string for transmission
+            #serverSocket.sendto(wholeMessage.encode(),clientAddress) #sending the whole message back to the client
 
 elif options.protocolChoice == "TCP":
     
@@ -67,20 +113,57 @@ elif options.protocolChoice == "TCP":
         if modifiedMessage == '1':       
             hostname=socket.gethostname() 
             IPAddr=socket.gethostbyname(hostname) #these two^ functions get the ip address
-            connectionSocket.send (IPAddr.encode()) #sending the ip address back to the client
+            if type(IPAddr) == str:
+                resCode = 'OK'
+                message = IPAddr + ' ' + resCode
+                connectionSocket.send (message.encode()) #sending the ip address back to the client
+                file = open("socketServerLog.txt", "a")
+                file.write( '\n' + str(datetime.now()) + '\t' + 'IP' + '\t' + resCode)
+                file.close()
+            else:
+                resCode = 'INVALID'
+                message = 'INVALIDREQUEST' + ' ' + resCode
+                connectionSocket.send (message.encode())
+                file = open("socketServerLog.txt", "a")
+                file.write( '\n' + str(datetime.now()) + '\t' + 'IP' + '\t' + resCode)
+                file.close()
         elif modifiedMessage == '2':
-            message = str(clientAddress[1]) #turning the port number into a string for encoding
+            message = clientAddress[1] #turning the port number into a string for encoding
             print (message)
-            connectionSocket.send(message.encode()) #sending the port number back to the client
+            if message > 1 and message < 65536:
+                resCode = 'OK'
+                message = str(clientAddress[1]) #turning the port number into a string for encoding
+                message = message + ' ' + resCode
+                connectionSocket.send(message.encode()) #sending the port number back to the client
+                file = open("socketServerLog.txt", "a")
+                file.write( '\n' + str(datetime.now()) + '\t' + 'PORT' + '\t' + resCode) #writing to the log file
+                file.close()
+            else:
+                resCode = 'INVALID'
+                message = 'INVALID'
+                connectionSocket.send (message.encode())
+                file = open("socketServerLog.txt", "a")
+                file.write( '\n' + str(datetime.now()) + '\t' + 'PORT' + '\t' + resCode)
+                file.close()
         else:
             message = datetime.now() #getting the servers date and time
             modifiedMessage = datetime.strptime(modifiedMessage, "%Y/%m/%d, %H:%M:%S:%f") #taking the client date and time and formatting it
-            print (message)
-            print(modifiedMessage)
-            newMessage = message - modifiedMessage #calculating the delay between the client and the server
-            newMessage = str(newMessage)
-            wholeMessage = newMessage + ' ' + str(message) #combining the delay and the servers date time into one string for transmission
-            connectionSocket.send(wholeMessage.encode()) #sending the whole message back to the client
+            if type(message) == type(modifiedMessage):
+                resCode = 'OK'
+                newMessage = message - modifiedMessage #calculating the delay between the client and the server
+                newMessage = str(newMessage)
+                wholeMessage = newMessage + ' ' + str(message) + ' ' + resCode #combining the delay and the servers date time into one string for transmission
+                connectionSocket.send(wholeMessage.encode()) #sending the whole message back to the client
+                file = open("socketServerLog.txt", "a")
+                file.write('\n' + str(datetime.now()) + '\t' + 'DATETIME' + '\t' + resCode)
+                file.close()
+            else:
+                resCode = 'INVALID'
+                message = 'INVALIDREQUEST' + ' ' + str(datetime.now()) + ' ' + resCode
+                connectionSocket.send(message.encode())
+                file = open("socketServerLog.txt", "a")
+                file.write('\n' + str(datetime.now()) + '\t' + 'DATETIME' + '\t' + resCode)
+                file.close()
 
 else:
     print ("Unsupported protocol sent, use TCP or UDP")

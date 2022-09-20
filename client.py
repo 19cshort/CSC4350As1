@@ -44,15 +44,25 @@ if options.protocolChoice == "UDP":
 
             modifiedMessage, serverAddress = clientSocket.recvfrom(2048) #recieving message from the server
             modifiedMessage.decode() #decoding message which is the ip address
-            print ("The client ip is: ", modifiedMessage)
+            modifiedMessage = str(modifiedMessage)
+            Ip, resCode = modifiedMessage.split()
+            if resCode == "OK'":
+                print ("The client ip is: ", Ip)
+            else:
+                print ("Invalid Request")
 
         elif choice == 2: #This option will return the port used to make the connection
             message = '2'
             clientSocket.sendto(message.encode(),(options.serverName,options.serverPort)) #sending message to the server
 
             modifiedMessage, serverAddress = clientSocket.recvfrom(2048) #recieving message from the server
-            modifiedMessage.decode() #decoding message which is the port used by client to connect to the server
-            print ("The client port is: ", modifiedMessage)
+            modifiedMessage.decode()
+            modifiedMessage = str(modifiedMessage)#decoding message which is the port used by client to connect to the server
+            port, resCode = modifiedMessage.split()
+            if resCode == "OK'":
+                print ("The client port is: ", port)
+            else:
+                print ("Invalid Request")
 
         elif choice == 3: #This option will calculate and return the time delay between the client and server and the time delay from server to client
             message = datetime.now() #getting client date and time
@@ -61,15 +71,17 @@ if options.protocolChoice == "UDP":
 
             modifiedMessage, serverAddress = clientSocket.recvfrom(2048) #recieving message from the server
             modifiedMessage = modifiedMessage.decode() #decoding the message
-            csTimeDelay, serverDate, serverTime = modifiedMessage.split() #splitting the message into 3 parts and storing those parts in their own variable
-            print ("The time delay from client to server is: ", csTimeDelay) #printing the time delay from client to server
+            csTimeDelay, serverDate, serverTime, resCode = modifiedMessage.split() #splitting the message into 3 parts and storing those parts in their own variable
+            if resCode == "OK":
+                print ("The time delay from client to server is: ", csTimeDelay) #printing the time delay from client to server
 
-            serverDateTime = serverDate + ', ' + serverTime #combining the server date and server time into one string
-            serverDateTime = datetime.strptime(serverDateTime, "%Y-%m-%d, %H:%M:%S.%f") #taking that string and turning it into a datetime
-            clientTime = datetime.now() #calculating the client date and time
-            #serverDateTime = datetime.strftime("%Y/%m/%d, %H:%M:%S:%f")
-            scTimeDelay = clientTime - serverDateTime #calculating the time delay from server to client
-            print ("The time delay from server to client is: ", scTimeDelay) #printing the time delay from server to client
+                serverDateTime = serverDate + ', ' + serverTime #combining the server date and server time into one string
+                serverDateTime = datetime.strptime(serverDateTime, "%Y-%m-%d, %H:%M:%S.%f") #taking that string and turning it into a datetime
+                clientTime = datetime.now() #calculating the client date and time
+                scTimeDelay = clientTime - serverDateTime #calculating the time delay from server to client
+                print ("The time delay from server to client is: ", scTimeDelay) #printing the time delay from server to client
+            else:
+                print ("INVALID REQUEST")
 
         elif choice == 4: #this option will close the connection
             clientSocket.close
@@ -78,7 +90,7 @@ if options.protocolChoice == "UDP":
             print ("Selection not valid")
 
 elif options.protocolChoice == "TCP":
-    
+
     #while loop to print out menu as long as connection is left open
     while choice < 4:
         print ("Client Menu")
@@ -87,17 +99,22 @@ elif options.protocolChoice == "TCP":
         print ("Enter a 3 to return the date/time from the client")
         print ("Enter a 4 to close the connection")
         choice = int(input ("Please choose an option: ")) #getting user choice
-        
-        clientSocket = socket(AF_INET, SOCKE_STREAM)
+
+        clientSocket = socket(AF_INET, SOCK_STREAM)
         clientSocket.connect((options.serverName,options.serverPort))
-        
+
         if choice == 1: #This option will return the ip address used to make the connection
             message = '1'
             clientSocket.send(message.encode()) #sending message to the server
 
             modifiedMessage = clientSocket.recv(2048) #recieving message from the server
             modifiedMessage.decode() #decoding message which is the ip address
-            print ("The client ip is: ", modifiedMessage)
+            modifiedMessage = str(modifiedMessage)
+            Ip, resCode = modifiedMessage.split()
+            if resCode == "OK'":
+                print ("The client ip is: ", Ip)
+            else:
+                print ("Invalid Request")
             clientSocket.close
 
         elif choice == 2: #This option will return the port used to make the connection
@@ -106,7 +123,12 @@ elif options.protocolChoice == "TCP":
 
             modifiedMessage = clientSocket.recv(2048) #recieving message from the server
             modifiedMessage.decode() #decoding message which is the port used by client to connect to the server
-            print ("The client port is: ", modifiedMessage)
+            modifiedMessage = str(modifiedMessage)
+            port, resCode = modifiedMessage.split()
+            if resCode == "OK'":
+                print ("The client port is: ", port)
+            else:
+                print ("Invalid Request")
             clientSocket.close
 
         elif choice == 3: #This option will calculate and return the time delay between the client and server and the time delay from server to client
@@ -116,17 +138,19 @@ elif options.protocolChoice == "TCP":
 
             modifiedMessage = clientSocket.recv(2048) #recieving message from the server
             modifiedMessage = modifiedMessage.decode() #decoding the message
-            csTimeDelay, serverDate, serverTime = modifiedMessage.split() #splitting the message into 3 parts and storing those parts in their own variable
-            print ("The time delay from client to server is: ", csTimeDelay) #printing the time delay from client to server
+            csTimeDelay, serverDate, serverTime, resCode = modifiedMessage.split() #splitting the message into 3 parts and storing those parts in their own variable
+            if resCode == "OK":
+                print ("The time delay from client to server is: ", csTimeDelay) #printing the time delay from client to server
 
-            serverDateTime = serverDate + ', ' + serverTime #combining the server date and server time into one string
-            serverDateTime = datetime.strptime(serverDateTime, "%Y-%m-%d, %H:%M:%S.%f") #taking that string and turning it into a datetime
-            clientTime = datetime.now() #calculating the client date and time
-            #serverDateTime = datetime.strftime("%Y/%m/%d, %H:%M:%S:%f")
-            scTimeDelay = clientTime - serverDateTime #calculating the time delay from server to client
-            print ("The time delay from server to client is: ", scTimeDelay) #printing the time delay from server to client
+                serverDateTime = serverDate + ', ' + serverTime #combining the server date and server time into one string
+                serverDateTime = datetime.strptime(serverDateTime, "%Y-%m-%d, %H:%M:%S.%f") #taking that string and turning it into a datetime
+                clientTime = datetime.now() #calculating the client date and time
+                scTimeDelay = clientTime - serverDateTime #calculating the time delay from server to client
+                print ("The time delay from server to client is: ", scTimeDelay) #printing the time delay from server to client
+            else:
+                print ("INVALID REQUEST")
             clientSocket.close
-            
+
         elif choice == 4: #this option will close the connection
             clientSocket.close
 
